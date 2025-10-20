@@ -30,8 +30,14 @@ def load_json(path, keys_to_int=False):
 
   return content
 
-models_info = load_json(
-        '/home/bop/datasets/tudl/models/models_info.json', keys_to_int=True)
+# Load models_info dynamically based on dataset
+# Default to TUDL for backward compatibility
+try:
+    models_info = load_json(
+            '/home/bop/datasets/tudl/models/models_info.json', keys_to_int=True)
+except:
+    # Will be loaded per dataset in __init__
+    models_info = None
 # BopInstanceDataset should only be used with test=True for debugging reasons
 # use detector_crops.DetectorCropDataset for actual test inference
 

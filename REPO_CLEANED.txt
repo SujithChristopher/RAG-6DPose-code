@@ -1,0 +1,39 @@
+Repository Cleanup - 2025-10-20
+
+✅ REMOVED:
+- Old documentation (6 files) → moved to archive_docs/
+- Failed script versions (4 files):
+  - generate_cad_dino_features.py (old Open3D version)
+  - generate_synthetic_data.py (BlenderProc errors)
+  - generate_synthetic_data_v2.py (BlenderProc errors)
+  - convert_obj_to_ply.py (old version)
+- Redundant docs:
+  - NEXT_STEPS.md
+  - TRAINING_READY.md
+
+✅ KEPT (Essential Files):
+Documentation:
+  - README.md (new, consolidated guide)
+  - CLEAN_PATH_SUMMARY.md (quick reference)
+  - CODE_CHANGES_APPLIED.md (changes + troubleshooting)
+  - CLAUDE.md (architecture reference)
+
+Tools:
+  - convert_obj_to_ply_fixed.py (working version)
+  - generate_cad_dino_features_simple.py (working version)
+  - generate_minimal_dataset.py (quick dataset creation)
+  - verify_ply.py (validation)
+
+Data:
+  - models/ (CAD model + info)
+  - cad_features/ (DINO features)
+  - chasis_dataset/ (training data)
+
+Code:
+  - surfemb/ (modified for CHASIS)
+
+Archive:
+  - archive_docs/ (historical documentation)
+
+✅ RESULT:
+Clean, focused repository with only working versions and essential docs.

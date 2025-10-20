@@ -45,7 +45,23 @@ Datasets are available at: https://bop.felk.cvut.cz/datasets/
 
 ## Custom Dataset Processing
 
-To convert custom datasets (images + 3D models) to BOP format, use preprocessing scripts in [custom_data_proc/](custom_data_proc/):
+### CAD Model Conversion
+
+**Convert OBJ/STL to PLY format:**
+```bash
+python convert_obj_to_ply_fixed.py <input_file> --output-dir models --obj-id 1
+```
+
+This script:
+- Converts CAD models (OBJ, STL, etc.) to PLY format with vertex colors
+- Creates `models_info.json` with diameter calculation
+- Validates compatibility with Open3D and Trimesh
+
+**Example:** CHASIS_001.obj → obj_000001.ply (66,230 vertices, 260.09mm diameter)
+
+### BOP Format Preprocessing
+
+Use preprocessing scripts in [custom_data_proc/](custom_data_proc/):
 
 - [mask_converter.py](custom_data_proc/mask_converter.py): Convert mask formats
 - [m2mm_converter.py](custom_data_proc/m2mm_converter.py): Unit conversion (meters to millimeters)

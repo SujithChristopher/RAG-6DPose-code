@@ -25,3 +25,13 @@ config['itodd'] = itodd = DatasetConfig()
 itodd.depth_ext = 'tif'
 itodd.img_folder = 'gray'
 itodd.img_ext = 'tif'
+
+# CHASIS dataset configuration
+config['chasis'] = chasis = DatasetConfig()
+chasis.model_folder = 'models'
+chasis.train_folder = 'train_real'
+chasis.test_folder = 'test'
+chasis.img_folder = 'rgb'
+chasis.depth_folder = 'depth'
+chasis.img_ext = 'png'
+chasis.depth_ext = 'png'

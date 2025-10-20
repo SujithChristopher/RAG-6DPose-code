@@ -1,10 +1,21 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" convert_obj_to_ply_fixed.py cad/CHASIS_001.obj --output-dir models --obj-id 1)",
+      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -c \"import torchvision; from PIL import Image; print(''✓ torchvision and PIL available'')\")",
+      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -m pip install torchvision pillow tqdm -q)",
+      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" generate_cad_dino_features.py models/obj_000001.ply --output cad_features/obj_000001_dino_feat.pt --n-views 100 --device cuda)",
+      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -m pip install pyrender -q)",
+      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" generate_cad_dino_features_simple.py models/obj_000001.ply --output cad_features/obj_000001_dino_feat.pt --n-views 100 --device cuda)",
+      "Bash(test -f generate_cad_dino_features_simple.py)",
+      "Bash(source:*)",
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(conda install:*)",
       "Bash(cat:*)",
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -c:*)",
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" verify_ply.py)"
+      "Bash(tree:*)",
+      "Bash(blenderproc:*)",
+      "Bash(tee:*)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []

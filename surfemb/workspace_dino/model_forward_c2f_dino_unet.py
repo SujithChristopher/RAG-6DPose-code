@@ -56,19 +56,25 @@ class Gen_corr(pl.LightningModule):
         
         self.dino_model = dino_model
         
-        self.p1_ori = torch.tensor(np.asarray(o3d.io.read_point_cloud("/home/workspace_dino/tudl_cad/cad_points_xyz_color/obj_000001.ply").points)).float()
-        self.p5_ori = torch.tensor(np.asarray(o3d.io.read_point_cloud("/home/workspace_dino/tudl_cad/cad_points_xyz_color/obj_000002.ply").points)).float()
-        self.p6_ori = torch.tensor(np.asarray(o3d.io.read_point_cloud("/home/workspace_dino/tudl_cad/cad_points_xyz_color/obj_000003.ply").points)).float()
+        # CHASIS object paths
+        cad_path = "/media/sujith/Project/NOARK_CV/RAG-6DPose-code/models/obj_000001.ply"
+        feat_path = "/media/sujith/Project/NOARK_CV/RAG-6DPose-code/cad_features/obj_000001_dino_feat.pt"
 
-        
-        self.p1_color = torch.tensor(np.asarray(o3d.io.read_point_cloud("/home/workspace_dino/tudl_cad/cad_points_xyz_color/obj_000001.ply").colors)).float()
-        self.p5_color = torch.tensor(np.asarray(o3d.io.read_point_cloud("/home/workspace_dino/tudl_cad/cad_points_xyz_color/obj_000002.ply").colors)).float()
-        self.p6_color = torch.tensor(np.asarray(o3d.io.read_point_cloud("/home/workspace_dino/tudl_cad/cad_points_xyz_color/obj_000003.ply").colors)).float()
+        # Load CHASIS point cloud
+        pcd = o3d.io.read_point_cloud(cad_path)
+        self.p1_ori = torch.tensor(np.asarray(pcd.points)).float()
+        self.p1_color = torch.tensor(np.asarray(pcd.colors)).float()
 
-        
-        self.pd1_ori = torch.load("/home/workspace_dino/tudl_cad/cad_points_feat_768/cad_points_feat_01.pt").float()
-        self.pd5_ori = torch.load("/home/workspace_dino/tudl_cad/cad_points_feat_768/cad_points_feat_02.pt").float()
-        self.pd6_ori = torch.load("/home/workspace_dino/tudl_cad/cad_points_feat_768/cad_points_feat_03.pt").float()
+        # Load CHASIS DINO features
+        self.pd1_ori = torch.load(feat_path).float()
+
+        # For compatibility with 3-object code, duplicate to p5 and p6
+        self.p5_ori = self.p1_ori.clone()
+        self.p6_ori = self.p1_ori.clone()
+        self.p5_color = self.p1_color.clone()
+        self.p6_color = self.p1_color.clone()
+        self.pd5_ori = self.pd1_ori.clone()
+        self.pd6_ori = self.pd1_ori.clone()
 
 
         self.p1 = None
