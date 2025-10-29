@@ -3,7 +3,7 @@ from typing import Set
 import cv2
 import numpy as np
 
-from .instance import BopInstanceDataset, BopInstanceAux
+from .instance_tudl import BopInstanceDataset, BopInstanceAux
 from .tfms import normalize
 
 

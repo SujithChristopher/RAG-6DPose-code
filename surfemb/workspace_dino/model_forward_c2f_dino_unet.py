@@ -19,7 +19,7 @@ from .endecoder import UNet, UNet_Encoder, UNet_Decoder, UNet_Decoder_highdim, U
 from .. import data
 from ..data.obj import Obj
 
-import surfemb_t.workspace_dino.modules.imagenet as imagenet
+import surfemb.workspace_dino.modules.imagenet as imagenet
 import surfemb.workspace_dino.modules.pointnet2 as pointnet2
 import surfemb.workspace_dino.modules.layers_pc as layers_pc
 from .cross_attention import CrossAttention, SelfAttention ,SurfAttention

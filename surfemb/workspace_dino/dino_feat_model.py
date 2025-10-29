@@ -136,7 +136,13 @@ class DINO_feat(nn.Module):
         
     
     def load_model(self):
-        self.model = torch.hub.load('/home/.cache/torch/hub/facebookresearch_dinov2_main', 'dinov2_vitb14', trust_repo=True, source='local')
+        # Try to load from local cache first, then fall back to downloading from hub
+        try:
+            self.model = torch.hub.load('/home/.cache/torch/hub/facebookresearch_dinov2_main', 'dinov2_vitb14', trust_repo=True, source='local')
+        except (FileNotFoundError, Exception):
+            # Fall back to downloading from GitHub
+            print("Local DINO cache not found, downloading from PyTorch Hub...")
+            self.model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vitb14', trust_repo=True)
 
 
     def forward(self, x):  # x.shape [32, 3, 256, 256]

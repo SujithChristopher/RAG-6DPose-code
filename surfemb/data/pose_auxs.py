@@ -2,7 +2,7 @@ from typing import Sequence
 
 import numpy as np
 
-from .instance import BopInstanceAux
+from .instance_tudl import BopInstanceAux
 from .obj import Obj
 from .renderer import ObjCoordRenderer
 

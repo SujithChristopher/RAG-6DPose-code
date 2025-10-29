@@ -3,3 +3,8 @@ models/
 chasis_dataset
 cad_features
 archive_docs
+quick_train_output
+*.pyc
+.claude
+simple_train_output
+*.log
