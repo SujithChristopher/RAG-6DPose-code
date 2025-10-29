@@ -1,35 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -c \"import torchvision; from PIL import Image; print(''✓ torchvision and PIL available'')\")",
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -m pip install torchvision pillow tqdm -q)",
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" generate_cad_dino_features.py models/obj_000001.ply --output cad_features/obj_000001_dino_feat.pt --n-views 100 --device cuda)",
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" -m pip install pyrender -q)",
-      "Bash(\"/c/Users/Pintu/miniconda3/envs/py12/python.exe\" generate_cad_dino_features_simple.py models/obj_000001.ply --output cad_features/obj_000001_dino_feat.pt --n-views 100 --device cuda)",
-      "Bash(test -f generate_cad_dino_features_simple.py)",
-      "Bash(source:*)",
-      "Bash(python:*)",
-      "Bash(pip install:*)",
-      "Bash(conda install:*)",
-      "Bash(cat:*)",
-      "Bash(tree:*)",
-      "Bash(blenderproc:*)",
-      "Bash(tee:*)",
-      "Bash(test:*)",
-      "Bash(timeout 300 python quick_train.py)",
-      "Bash(pgrep -a python)",
-      "Bash(timeout 60 python quick_train.py)",
-      "Bash(timeout 120 python quick_train.py)",
-      "Bash(timeout 180 python quick_train.py)",
-      "Bash(pkill -f \"python quick_train.py\")",
-      "Bash(pkill -9 -f \"python quick_train.py\")",
-      "Bash(timeout 120 python test_single_batch.py)",
-      "Bash(pkill -9 -f \"python quick_train\")",
-      "Bash(timeout 180 python simple_train.py)",
-      "Bash(ls -lh /media/sujith/Project/NOARK_CV/RAG-6DPose-code/{quick_train.py,simple_train.py,test_single_batch.py,TRAINING_DEBUG_SUMMARY.md})",
-      "Bash(timeout 150 python simple_train.py)",
-      "Bash(timeout 120 python infer_poses.py)",
-      "Bash(timeout 60 python simple_pose_viz.py --poses inference_output/estimated_poses.json --n-poses 20)"
+      "Bash(awk '{printf \"\"\"\"  %-35s %8s\\n\"\"\"\", $9, $5}')"
     ],
     "deny": [],
     "ask": []

@@ -1,167 +1,160 @@
-# RAG-6DPose CHASIS Training Setup
+# RAG-6DPose - 6D Object Pose Estimation
 
-6D object pose estimation for CHASIS object using RGB images with DINO features.
+6D object pose estimation using RGB images with DINO vision transformer features and surface embedding matching.
 
----
+## Quick Start
 
-## 🎯 Current Status
+### 1. Training
 
-**Phase:** Ready for Training (5/8 Complete - 62.5%)
+```bash
+python simple_train.py
+```
 
-✅ CAD Model Ready
-✅ DINO Features Generated
-✅ BOP Dataset Created
-✅ Code Modified for CHASIS
-📋 Training Pipeline Test (Next)
+**Output:** Trained model checkpoint in `simple_train_output/`
+- `model_final.pt` - Final model weights (1.3 GB)
+- `training_history.json` - Training metrics
 
----
+**Configuration Options** (in `simple_train.py`):
+- `BATCH_SIZE = 4` - Adjust for GPU memory
+- `NUM_EPOCHS = 2` - Number of training epochs
+- `CHECKPOINT_STRATEGY = 'inference_only'` - Checkpoint saving mode:
+  - `'inference_only'` - Save only final model (1.3 GB)
+  - `'last_checkpoint'` - Save latest checkpoint only (2.5 GB)
+  - `'all_epochs'` - Save all epochs (not recommended)
 
-## 📁 Project Structure
+### 2. Inference
+
+```bash
+python infer_poses.py
+```
+
+**Output:** 100 estimated poses in `inference_output/estimated_poses.json`
+- Rotation matrices, Euler angles, translations
+- Confidence scores and loss values
+
+### 3. Visualization
+
+```bash
+python simple_pose_viz.py --poses inference_output/estimated_poses.json
+```
+
+**Output:** PNG visualizations
+- `pose_3d_visualization.png` - 3D CAD point cloud with camera frames
+- `pose_2d_projections.png` - 2D camera projections
+
+## Project Structure
 
 ```
 RAG-6DPose-code/
-├── models/
-│   ├── obj_000001.ply          # CHASIS CAD (66K vertices)
-│   └── models_info.json         # Diameter: 260mm
+├── simple_train.py              # Main training script
+├── infer_poses.py               # Inference script
+├── simple_pose_viz.py           # Visualization script
+├── test_single_batch.py         # Single batch test
+├── quick_train.py               # PyTorch Lightning training (alternative)
 │
-├── cad_features/
-│   └── obj_000001_dino_feat.pt  # DINO features (195MB, 768-dim)
+├── models/                      # CAD models
+│   ├── obj_000001.ply          # 3D model (PLY format)
+│   └── models_info.json
 │
-├── chasis_dataset/
-│   └── train_real/000001/       # Training data (50 images)
+├── cad_features/                # Pre-computed DINO features
+│   └── obj_000001_dino_feat.pt
+│
+├── chasis_dataset/              # Training data (BOP format)
+│   └── train_real/000001/
 │       ├── rgb/                 # RGB images
-│       ├── mask_visib/          # Segmentation masks
 │       ├── depth/               # Depth maps
-│       ├── scene_camera.json    # Camera intrinsics
+│       ├── mask_visib/          # Segmentation masks
 │       ├── scene_gt.json        # Ground truth poses
+│       ├── scene_camera.json    # Camera intrinsics
 │       └── scene_gt_info.json   # Visibility info
 │
-├── surfemb/                     # Main codebase (modified)
-│   ├── workspace_dino/          # DINO-enhanced model
-│   ├── data/                    # Dataset loaders
-│   └── scripts/                 # Training scripts
-│
-└── Tools/
-    ├── convert_obj_to_ply_fixed.py              # CAD conversion
-    ├── generate_cad_dino_features_simple.py     # DINO generation
-    ├── generate_minimal_dataset.py              # Quick dataset
-    └── verify_ply.py                            # PLY validation
+└── surfemb/                     # Model and data loading code
+    ├── workspace_dino/          # DINO-enhanced model
+    ├── data/                    # Dataset loaders
+    └── scripts/                 # Training utilities
 ```
 
----
+## Training Output
 
-## 🚀 Quick Start
+After training, outputs are saved to:
+- **Checkpoints:** `simple_train_output/`
+- **Inference:** `inference_output/`
+- **Visualizations:** `pose_*.png` in root directory
 
-### 1. Configure Training Script
+### File Sizes
 
-Edit [surfemb/scripts/train_matching_dino_unet_tudl.py](surfemb/scripts/train_matching_dino_unet_tudl.py):
+| File | Size | Purpose |
+|------|------|---------|
+| model_final.pt | 1.3 GB | Final model weights |
+| estimated_poses.json | ~64 KB | 100 pose estimates |
+| pose_3d_visualization.png | ~770 KB | 3D visualization |
+| pose_2d_projections.png | ~106 KB | 2D projections |
 
-```python
-# Line ~48: Dataset path
-dataset_root = Path('/media/sujith/Project/NOARK_CV/RAG-6DPose-code/chasis_dataset')
+## Model Architecture
 
-# Line ~65: Config
-from surfemb.data.config import config
-cfg = config['chasis']
-n_objs = 1
+**Gen_corr** - Main model combining:
+- **DINO Feature Extractor** - 768-dim vision transformer features
+- **Image Encoder** - ResNet backbone with UNet decoder
+- **Point Cloud Processing** - Self-attention on 3D features
+- **Cross-Attention** - Between image and 3D features
+- **Decoders** - Embedding prediction and segmentation mask
 
-# Line ~115: WandB key
-os.environ["WANDB_API_KEY"] = "your_key"  # From wandb.ai/authorize
-```
+**Training Loss:** Mask loss (L1) + NCE contrastive loss
 
-### 2. Test Configuration
+## Requirements
+
+- Python 3.12+
+- PyTorch 2.6+
+- CUDA 12.6+ (for GPU)
+- Open3D, NumPy, OpenCV, Albumentations
+
+## Key Scripts
+
+| Script | Purpose | Time |
+|--------|---------|------|
+| `simple_train.py` | Train model | ~1 min/epoch |
+| `infer_poses.py` | Estimate poses | ~11 sec (100 samples) |
+| `simple_pose_viz.py` | Generate plots | ~15 sec |
+| `test_single_batch.py` | Verify setup | ~5 sec |
+
+## Environment Setup
 
 ```bash
+# Activate environment
 source /home/sujith/miniconda3/bin/activate r12
 
-# Test config
-python -c "from surfemb.data.config import config; print(f'✓ {config[\"chasis\"].train_folder}')"
-
-# Test data loading
-python -c "import open3d as o3d, torch; pcd=o3d.io.read_point_cloud('models/obj_000001.ply'); feat=torch.load('cad_features/obj_000001_dino_feat.pt'); print(f'✓ {len(pcd.points)} points')"
+# Run any script
+python simple_train.py
 ```
 
-### 3. Run Training Test
+## Troubleshooting
 
-```bash
-# Short test (100 steps, ~10 minutes)
-python -m surfemb.scripts.train_matching_dino_unet_tudl chasis --real --max-steps 100 --batch-size 4
+**Out of Memory:**
+- Reduce `BATCH_SIZE` in training script
+- Try `BATCH_SIZE = 2` or `BATCH_SIZE = 1`
 
-# Full training (after test succeeds)
-python -m surfemb.scripts.train_matching_dino_unet_tudl chasis --real
-```
+**DINO Model Download Slow:**
+- First run downloads ~350MB DINOv2 model
+- Cached after first run for faster subsequent runs
 
----
+**Dataset Not Found:**
+- Check `DATASET_ROOT` path in scripts (must be absolute path)
+- Verify CAD model file: `models/obj_000001.ply`
+- Verify DINO features: `cad_features/obj_000001_dino_feat.pt`
 
-## 📖 Documentation
+## References
 
-- **[CLEAN_PATH_SUMMARY.md](CLEAN_PATH_SUMMARY.md)** - Overview and next steps ⭐ Start here
-- **[CODE_CHANGES_APPLIED.md](CODE_CHANGES_APPLIED.md)** - Code modifications + troubleshooting
-- **[CLAUDE.md](CLAUDE.md)** - Codebase architecture reference
-- **[archive_docs/](archive_docs/)** - Historical documentation
+- **Model Code:** [surfemb/workspace_dino/](surfemb/workspace_dino/)
+- **Data Pipeline:** [surfemb/data/](surfemb/data/)
+- **Project Details:** [CLAUDE.md](CLAUDE.md)
 
----
+## Status
 
-## 🔧 Key Files Modified
-
-| File | Change | Status |
-|------|--------|--------|
-| `surfemb/workspace_dino/model_forward_c2f_dino_unet.py` | CAD/DINO paths | ✅ |
-| `surfemb/data/config.py` | CHASIS config | ✅ |
-| `surfemb/data/instance_tudl.py` | models_info fix | ✅ |
-| `surfemb/scripts/train_matching_dino_unet_tudl.py` | Dataset/WandB | 📋 Manual |
+✅ Training pipeline working
+✅ Inference implemented
+✅ Visualization generated
+✅ Checkpoint saving functional
 
 ---
 
-## 🐛 Troubleshooting
-
-**CUDA out of memory?**
-```bash
---batch-size 2  # or even 1
-```
-
-**Dataset not found?**
-Check paths in training script are absolute paths.
-
-**More help:** See [CODE_CHANGES_APPLIED.md](CODE_CHANGES_APPLIED.md#troubleshooting)
-
----
-
-## 📊 Training Data
-
-**Current:** 50 placeholder images (for pipeline testing)
-**Purpose:** Validate training code works
-**Next:** Generate proper synthetic data after pipeline verified
-
----
-
-## 🎯 Next Actions
-
-1. [ ] Edit training script (3 files changes above)
-2. [ ] Run quick tests
-3. [ ] Test train for 100 steps
-4. [ ] Debug any errors
-5. [ ] Full training run
-
----
-
-## 📝 Notes
-
-- DINO features generated on Linux (took ~12 min with GPU)
-- Current dataset is minimal (50 images) for testing only
-- Model will "train" but not learn useful features yet
-- Generate better synthetic data after pipeline works
-
----
-
-## 🔗 Resources
-
-- Original Paper: RAG-6DPose
-- Base Code: [Surfemb](https://github.com/rasmushaugaard/surfemb)
-- BOP Toolkit: https://github.com/thodan/bop_toolkit
-- DINOv2: https://github.com/facebookresearch/dinov2
-
----
-
-**Last Updated:** 2025-10-20
-**Environment:** Linux, Python 3.12, PyTorch 2.6, CUDA 12.6
+**Last Updated:** 2025-10-30
